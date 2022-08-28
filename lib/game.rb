@@ -22,11 +22,24 @@ class Game
   end
 
   def run
-    until game_over?
+    loop do
       execute_round
+      break if game_over?
+
       next_player
     end
+    draw? ? print_draw_msg : print_win_msg
   end
+
+  def execute_round; end
+
+  def draw?; end
+
+  def print_win_msg; end
+
+  def print_draw_msg; end
+
+  def game_over?; end
 
   def next_player
     @current_player = players.reject { |player| current_player == player }.first
