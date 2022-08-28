@@ -11,4 +11,4 @@ puts '
 
 '
 
-Game.new
+Game.new.run
