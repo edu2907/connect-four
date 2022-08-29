@@ -1,13 +1,14 @@
 # frozen_string_literal: true
 
 require_relative 'player'
+
 # Responsible for the logic of game
 class Game
   attr_accessor :current_player, :board
   attr_reader :players
 
   def initialize
-    @board = Array.new(7) { Array.new(6) }
+    @board = Array.new(6) { Array.new(7) }
     @players = create_players
     @current_player = @players[0]
   end
@@ -24,14 +25,15 @@ class Game
   def run
     loop do
       execute_round
-      break if game_over?
-
-      next_player
+      game_over? ? break : next_player
     end
     draw? ? print_draw_msg : print_win_msg
   end
 
-  def execute_round; end
+  def execute_round
+    print_board
+    current_player.insert_disk
+  end
 
   def draw?
     board.flatten.none?(&:nil?)
@@ -43,7 +45,20 @@ class Game
     @current_player = players.reject { |player| current_player == player }.first
   end
 
+  def disks(space)
+    space.nil? ? '⚪' : space
+  end
+
   private
+
+  def print_board
+    board.each do |col|
+      col.each do |space|
+        print " #{disks(space)} "
+      end
+      puts ''
+    end
+  end
 
   def print_win_msg; end
 

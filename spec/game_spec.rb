@@ -79,4 +79,20 @@ describe Game do
       end
     end
   end
+
+  describe '#disks' do
+    subject(:game_disks) { described_class.new }
+
+    context 'when space is empty' do
+      it 'returns a empty disk' do
+        expect(game_disks.disks(nil)).to eq('⚪')
+      end
+    end
+
+    context 'when space contains a disk' do
+      it 'returns the same disk' do
+        expect(game_disks.disks('⚫')).to eq('⚫')
+      end
+    end
+  end
 end
