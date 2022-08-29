@@ -62,6 +62,21 @@ describe Game do
   end
 
   describe 'draw?' do
-    
+    subject(:draw_game) { described_class.new }
+
+    context 'when the board is full' do
+      it 'returns true' do
+        draw_game.board = Array.new(7) { Array.new(6, 'O') }
+        expect(draw_game.draw?).to be true
+      end
+    end
+
+    context 'when the board isn\'t full' do
+      it 'returns false' do
+        draw_game.board = Array.new(7) { Array.new(6) }
+        draw_game.board[0][2] = 'O'
+        expect(draw_game.draw?).to be false
+      end
+    end
   end
 end
