@@ -37,7 +37,7 @@ class Game
   def execute_round
     puts "Round #{@round_n}"
     print_board
-    puts "#{players[0].name}: #{players[0].disk}\n#{players[1].name}: #{players[1].disk}"
+    puts "#{players[0].disk} - #{players[0].name}\n#{players[1].disk} - #{players[1].name}"
     current_player.insert_disk
   end
 

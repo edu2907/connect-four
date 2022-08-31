@@ -6,7 +6,7 @@ require 'colorize'
 class Player
   attr_reader :name, :disk
 
-  def initialize(valid_colors:, board: [])
+  def initialize(valid_colors: String.colors, board: Array.new(6) { Array.new(7) })
     @valid_colors = valid_colors
     @name = gets_name
     @disk = gets_disk
@@ -35,12 +35,42 @@ class Player
     end
   end
 
-  def insert_disk; end
+  def gets_column
+    loop do
+      column_num = input_column
+      if column_num.match?(/^[0-6]$/) && !column_full?(column_num)
+        return column_num.to_i
+      else
+        puts 'Invalid column! You should type a number between 0-7, where the number represents a column that is not full!'
+      end
+    end
+  end
+
+  def insert_disk
+    column_num = gets_column
+    5.downto(0) do |row_num|
+      if @board[row_num][column_num].nil?
+        @board[row_num][column_num] = disk
+        break
+      end
+    end
+  end
+
+  private
+
+  def input_column
+    puts 'Type the number of the column: (0-6)'
+    gets.chomp
+  end
 
   def input_color
     valid_colors_str = @valid_colors.join(', ')
     puts "Valid colors: #{valid_colors_str}"
     print 'Insert your disk color: '
     gets.chomp.to_sym
+  end
+
+  def column_full?(col)
+    !@board[0][col.to_i].nil?
   end
 end
