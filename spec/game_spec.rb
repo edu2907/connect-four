@@ -3,6 +3,8 @@ require './lib/game'
 describe Game do
   let(:player1) { double('Player1') }
   let(:player2) { double('Player2') }
+  let(:cyan_disk) { '⚫'.cyan }
+  let(:blue_disk) { '⚫'.blue }
   before do
     allow_any_instance_of(described_class).to receive(:create_players).and_return([player1, player2])
   end
@@ -58,7 +60,129 @@ describe Game do
   end
 
   describe '#game_over?' do
-    
+    subject(:end_game) { described_class.new }
+    before do
+      allow(player1).to receive(:disk).and_return(cyan_disk)
+    end
+
+    context 'when a horizontal line is formed' do
+      # Board sample:
+      #  ' ' ' ' ' ' '
+      #  ' ' ' ' ' ' '
+      #  ' ' ' ' ' ' '
+      #  ' ' ' ' ' ' '
+      #  ⚪ ⚫ ⚪ ⚫ ' ' '
+      #  ⚪ ⚫ ⚫ ⚫ ⚫ ⚪ ⚪
+      # Cyan: ⚫ | Blue: ⚪ | Empty: '
+
+      it 'returns true' do
+        end_game.board = [
+          [nil, nil, nil, nil, nil, nil, nil],
+          [nil, nil, nil, nil, nil, nil, nil],
+          [nil, nil, nil, nil, nil, nil, nil],
+          [nil, nil, nil, nil, nil, nil, nil],
+          [blue_disk, cyan_disk, blue_disk, cyan_disk, nil, nil, nil],
+          [blue_disk, cyan_disk, cyan_disk, cyan_disk, cyan_disk, blue_disk, blue_disk]
+        ]
+        result = end_game.game_over?
+        expect(result).to be true
+      end
+    end
+
+    context 'when a vertical line is formed' do
+      # Board sample:
+      #  ' ' ' ' ' ' '
+      #  ' ' ' ' ' ' '
+      #  ' ' ' ⚫ ' ' '
+      #  ' ' ⚪ ⚫ ' ' '
+      #  ' ⚫ ⚪ ⚫ ⚫ ⚪ '
+      #  ' ⚫ ⚪ ⚫ ⚪ ⚪ '
+      # Cyan: ⚫ | Blue: ⚪ | Empty: '
+
+      it 'returns true' do
+        end_game.board = [
+          [nil, nil, nil, nil, nil, nil, nil],
+          [nil, nil, nil, nil, nil, nil, nil],
+          [nil, nil, nil, cyan_disk, nil, nil, nil],
+          [nil, nil, blue_disk, cyan_disk, nil, nil, nil],
+          [nil, cyan_disk, blue_disk, cyan_disk, cyan_disk, blue_disk, nil],
+          [nil, cyan_disk, blue_disk, cyan_disk, blue_disk, blue_disk, nil]
+        ]
+        result = end_game.game_over?
+        expect(result).to be true
+      end
+    end
+
+    context 'when a diagonal line is formed' do
+      # Board sample:
+      #  ' ' ' ' ' ' '
+      #  ' ' ' ' ' ' '
+      #  ⚫ ' ' ' ' ' '
+      #  ⚪ ⚫ ' ' ' ⚪ '
+      #  ⚪ ⚫ ⚫ ⚫ ' ⚪ ⚫
+      #  ⚫ ⚫ ⚪ ⚫ ⚪ ⚪ ⚪
+      # Cyan: ⚫ | Blue: ⚪ | Empty: '
+
+      it 'returns true' do
+        end_game.board = [
+          [nil, nil, nil, nil, nil, nil, nil],
+          [nil, nil, nil, nil, nil, nil, nil],
+          [cyan_disk, nil, nil, nil, nil, nil, nil],
+          [blue_disk, cyan_disk, nil, nil, nil, blue_disk, nil],
+          [blue_disk, cyan_disk, cyan_disk, cyan_disk, nil, blue_disk, cyan_disk],
+          [cyan_disk, cyan_disk, blue_disk, cyan_disk, blue_disk, blue_disk, blue_disk]
+        ]
+        result = end_game.game_over?
+        expect(result).to be true
+      end
+    end
+
+    context 'when a reverse diagonal line is formed' do
+      # Board sample:
+      #  ' ' ' ' ' ' '
+      #  ' ' ' ' ' ' '
+      #  ' ' ' ' ' ' ⚫
+      #  ' ' ' ' ⚪ ⚫ ⚪
+      #  ' ⚫ ' ⚫ ⚫ ⚪ ⚫
+      #  ' ⚫ ⚪ ⚫ ⚪ ⚪ ⚪
+      # Cyan: ⚫ | Blue: ⚪ | Empty: '
+
+      it 'returns true' do
+        end_game.board = [
+          [nil, nil, nil, nil, nil, nil, nil],
+          [nil, nil, nil, nil, nil, nil, nil],
+          [nil, nil, nil, nil, nil, nil, cyan_disk],
+          [nil, nil, nil, nil, blue_disk, cyan_disk, blue_disk],
+          [nil, cyan_disk, nil, cyan_disk, cyan_disk, blue_disk, cyan_disk],
+          [nil, cyan_disk, blue_disk, cyan_disk, blue_disk, blue_disk, blue_disk]
+        ]
+        result = end_game.game_over?
+        expect(result).to be true
+      end
+    end
+
+    context 'when no line is formed' do
+      # Board sample:
+      #  ' ' ' ' ' ' '
+      #  ' ' ' ' ' ' '
+      #  ' ' ' ' ' ' '
+      #  ' ' ' ' ⚪ ⚫ ⚪
+      #  ' ⚫ ' ⚫ ⚫ ⚪ ⚫
+      #  ⚫ ⚫ ⚪ ⚫ ⚪ ⚪ ⚪
+      # Cyan: ⚫ | Blue: ⚪ | Empty: '
+      it 'returns false' do
+        end_game.board = [
+          [nil, nil, nil, nil, nil, nil, nil],
+          [nil, nil, nil, nil, nil, nil, nil],
+          [nil, nil, nil, nil, nil, nil, nil],
+          [nil, nil, nil, nil, blue_disk, cyan_disk, blue_disk],
+          [nil, cyan_disk, nil, cyan_disk, cyan_disk, blue_disk, cyan_disk],
+          [cyan_disk, cyan_disk, blue_disk, cyan_disk, blue_disk, blue_disk, blue_disk]
+        ]
+        result = end_game.game_over?
+        expect(result).to be false
+      end
+    end
   end
 
   describe 'draw?' do
@@ -66,15 +190,15 @@ describe Game do
 
     context 'when the board is full' do
       it 'returns true' do
-        draw_game.board = Array.new(7) { Array.new(6, 'O') }
+        draw_game.board = Array.new(7) { Array.new(6, cyan_disk) }
         expect(draw_game.draw?).to be true
       end
     end
 
     context 'when the board isn\'t full' do
       it 'returns false' do
-        draw_game.board = Array.new(7) { Array.new(6) }
-        draw_game.board[0][2] = 'O'
+        draw_game.board = Array.new(7) { Array.new(6, cyan_disk) }
+        draw_game.board[0][2] = nil
         expect(draw_game.draw?).to be false
       end
     end
