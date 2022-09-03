@@ -29,22 +29,18 @@ class Game
     loop do
       @round_n += 1
       execute_round
-      if game_over?
-        print_win_msg
-        break
-      elsif draw?
-        print_draw_msg
-        break
-      end
+
+      return print_win_msg if game_over?
+      return print_draw_msg if draw?
 
       next_player
     end
   end
 
   def execute_round
-    puts "Round #{@round_n}"
+    puts "     Round #{@round_n}: #{current_player.name}'s Turn"
     print_board
-    puts "#{players[0].disk} - #{players[0].name}\n#{players[1].disk} - #{players[1].name}"
+    puts "     #{players[0].disk} - #{players[0].name}\n     #{players[1].disk} - #{players[1].name}\n"
     current_player.insert_disk
   end
 
@@ -67,7 +63,9 @@ class Game
   private
 
   def print_board
+    puts '      0   1   2   3   4   5   6'
     board.each do |col|
+      print '     '
       col.each do |space|
         print " #{disks(space)} "
       end
@@ -76,8 +74,7 @@ class Game
   end
 
   # For each row, verifys if a line of 4 spaces is equal to "match_line"
-  def horizontal_line?
-    match_line = Array.new(4, @current_player.disk)
+  def horizontal_line?(match_line = Array.new(4, @current_player.disk))
     board.any? do |row|
       0.upto(3).any? do |start_col|
         end_col = start_col + 3
@@ -87,8 +84,7 @@ class Game
   end
 
   # For each column, verifys if a line of 4 spaces is equal to "match_line"
-  def vertical_line?
-    match_line = Array.new(4, @current_player.disk)
+  def vertical_line?(match_line = Array.new(4, @current_player.disk))
     0.upto(6).any? do |col_n|
       0.upto(2).any? do |start_row|
         end_row = start_row + 3
@@ -98,8 +94,7 @@ class Game
     end
   end
 
-  def diagonal_line?
-    match_line = Array.new(4, @current_player.disk)
+  def diagonal_line?(match_line = Array.new(4, @current_player.disk))
     0.upto(2).any? do |row_n|
       0.upto(3).any? do |col_n|
         diagonal_arr = [board[row_n][col_n], board[row_n + 1][col_n + 1], board[row_n + 2][col_n + 2],
@@ -109,8 +104,7 @@ class Game
     end
   end
 
-  def reverse_diagonal_line?
-    match_line = Array.new(4, @current_player.disk)
+  def reverse_diagonal_line?(match_line = Array.new(4, @current_player.disk))
     0.upto(2).any? do |row_n|
       0.upto(3).any? do |col_n|
         diagonal_arr = [board[row_n][col_n + 3], board[row_n + 1][col_n + 2], board[row_n + 2][col_n + 1],
@@ -120,7 +114,13 @@ class Game
     end
   end
 
-  def print_win_msg; end
+  def print_win_msg
+    print_board
+    puts "Game Over!\n#{@current_player.name} wins!"
+  end
 
-  def print_draw_msg; end
+  def print_draw_msg
+    print_board
+    puts 'Tie!'
+  end
 end

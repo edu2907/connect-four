@@ -185,7 +185,7 @@ describe Game do
     end
   end
 
-  describe 'draw?' do
+  describe '#draw?' do
     subject(:draw_game) { described_class.new }
 
     context 'when the board is full' do

@@ -38,11 +38,9 @@ class Player
   def gets_column
     loop do
       column_num = input_column
-      if column_num.match?(/^[0-6]$/) && !column_full?(column_num)
-        return column_num.to_i
-      else
-        puts 'Invalid column! You should type a number between 0-7, where the number represents a column that is not full!'
-      end
+      return column_num.to_i if column_num.match?(/^[0-6]$/) && !column_full?(column_num)
+
+      puts 'Invalid column! You should type a number between 0-7, where the number represents a column that is not full!'
     end
   end
 
